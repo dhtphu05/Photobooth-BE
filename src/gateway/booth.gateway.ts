@@ -8,6 +8,7 @@ import {
     OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ServerToClientEvents, ClientToServerEvents } from './booth.events';
 
 @WebSocketGateway({
     cors: {
@@ -16,7 +17,7 @@ import { Server, Socket } from 'socket.io';
 })
 export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
-    server: Server;
+    server: Server<ClientToServerEvents, ServerToClientEvents>;
 
     handleConnection(client: Socket) {
         console.log(`Client connected: ${client.id}`);
@@ -29,7 +30,7 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('join')
     handleJoin(
         @MessageBody() sessionId: string,
-        @ConnectedSocket() client: Socket,
+        @ConnectedSocket() client: Socket<ClientToServerEvents, ServerToClientEvents>,
     ) {
         client.join(sessionId);
         console.log(`Client ${client.id} joined session ${sessionId}`);
