@@ -37,3 +37,4 @@ lerna-debug.log*
 
 # nest
 nest-cli.json
+gcs-key.json

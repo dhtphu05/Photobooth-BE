@@ -3,16 +3,19 @@ import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { Session } from '../entities/session.entity';
 import { Media } from '../entities/media.entity';
+import { StorageService } from '../storage/storage.service';
 
 @ApiTags('Sessions')
 @Controller('api/sessions')
 export class SessionsController {
-    constructor(private readonly sessionsService: SessionsService) { }
+    constructor(
+        private readonly sessionsService: SessionsService,
+        private readonly storageService: StorageService,
+    ) { }
 
     @ApiOperation({ summary: 'Create a new session' })
     @ApiResponse({ status: 201, description: 'The session has been successfully created.', type: Session })
@@ -51,22 +54,22 @@ export class SessionsController {
     @ApiResponse({ status: 201, description: 'The file has been successfully uploaded.', type: Media })
     @Post(':id/upload')
     @UseInterceptors(FileInterceptor('file', {
-        storage: diskStorage({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                const ext = extname(file.originalname);
-                cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-            },
-        }),
+        storage: memoryStorage(),
     }))
     async uploadFile(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
         if (!file) {
             throw new BadRequestException('File is required');
         }
-        const fileUrl = `/uploads/${file.filename}`;
+
+        // Generate a unique filename
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const originalName = file.originalname.replace(/\s+/g, '-'); // Sanitize
+        const filename = `sessions/${id}/${uniqueSuffix}-${originalName}`;
+
+        // Upload to GCS
+        const fileUrl = await this.storageService.uploadFile(filename, file.buffer, file.mimetype);
+
         const media = await this.sessionsService.addMedia(id, fileUrl, 'ORIGINAL');
-        // Note: In a real app, you might distinguish between ORIGINAL and PROCESSED based on a query param or separate endpoint
         return media;
     }
 }
