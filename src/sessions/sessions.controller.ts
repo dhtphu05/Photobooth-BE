@@ -1,10 +1,10 @@
-import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException, Query, Get } from '@nestjs/common';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { Session } from '../entities/session.entity';
 import { Media } from '../entities/media.entity';
 import { StorageService } from '../storage/storage.service';
@@ -40,6 +40,7 @@ export class SessionsController {
 
     @ApiOperation({ summary: 'Upload a media file for the session' })
     @ApiConsumes('multipart/form-data')
+    @ApiQuery({ name: 'type', enum: ['ORIGINAL', 'PROCESSED', 'VIDEO'], required: false, description: 'Type of media (default: ORIGINAL)' })
     @ApiBody({
         schema: {
             type: 'object',
@@ -56,7 +57,11 @@ export class SessionsController {
     @UseInterceptors(FileInterceptor('file', {
         storage: memoryStorage(),
     }))
-    async uploadFile(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+    async uploadFile(
+        @Param('id') id: string,
+        @UploadedFile() file: Express.Multer.File,
+        @Query('type') type: 'ORIGINAL' | 'PROCESSED' | 'VIDEO' = 'ORIGINAL',
+    ) {
         if (!file) {
             throw new BadRequestException('File is required');
         }
@@ -69,7 +74,14 @@ export class SessionsController {
         // Upload to GCS
         const fileUrl = await this.storageService.uploadFile(filename, file.buffer, file.mimetype);
 
-        const media = await this.sessionsService.addMedia(id, fileUrl, 'ORIGINAL');
+        const media = await this.sessionsService.addMedia(id, fileUrl, type);
         return media;
+    }
+
+    @ApiOperation({ summary: 'Get session details by ID' })
+    @ApiResponse({ status: 200, description: 'Return the session with all associated media.', type: Session })
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.sessionsService.findOne(id);
     }
 }

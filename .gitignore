@@ -38,3 +38,4 @@ lerna-debug.log*
 # nest
 nest-cli.json
 gcs-key.json
+gcs_key_photobooth.json
