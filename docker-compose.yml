@@ -55,8 +55,6 @@ services:
       GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
       GCS_KEY_FILE_PATH: /app/gcs-key.json # Mount volume for key or use env var content
     volumes:
-      - .:/app
-      - /app/node_modules
       - ${GCS_KEY_FILE_PATH:-./gcs-key.json}:/app/gcs-key.json
     depends_on:
       postgres:
