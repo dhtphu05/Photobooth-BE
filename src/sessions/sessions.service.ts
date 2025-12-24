@@ -16,7 +16,8 @@ export class SessionsService {
     ) { }
 
     async create(createSessionDto: CreateSessionDto): Promise<Session> {
-        const session = this.sessionsRepository.create(createSessionDto);
+        // config from dto is currently unused/unmapped
+        const session = this.sessionsRepository.create();
         return this.sessionsRepository.save(session);
     }
 
