@@ -7,14 +7,14 @@ import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 export class AdminController {
     constructor(private readonly adminService: AdminService) { }
 
-    @ApiOperation({ summary: 'Get dashboard statistics' })
+    @ApiOperation({ summary: 'Get dashboard statistics', operationId: 'getAdminStats' })
     @ApiResponse({ status: 200, description: 'Return statistics about sessions and media.' })
     @Get('stats')
     getStats() {
         return this.adminService.getStats();
     }
 
-    @ApiOperation({ summary: 'Get paginated list of sessions' })
+    @ApiOperation({ summary: 'Get paginated list of sessions', operationId: 'getAdminSessions' })
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)' })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (default: 10)' })
     @ApiResponse({ status: 200, description: 'Return paginated sessions with total count.' })
@@ -26,7 +26,7 @@ export class AdminController {
         return this.adminService.findAllSessions(page, limit);
     }
 
-    @ApiOperation({ summary: 'Resend email to customer' })
+    @ApiOperation({ summary: 'Resend email to customer', operationId: 'resendSessionEmail' })
     @ApiResponse({ status: 201, description: 'Email has been resent.' })
     @Post('sessions/:id/resend-email')
     resendEmail(@Param('id') id: string) {

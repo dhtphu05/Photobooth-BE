@@ -17,28 +17,28 @@ export class SessionsController {
         private readonly storageService: StorageService,
     ) { }
 
-    @ApiOperation({ summary: 'Create a new session' })
+    @ApiOperation({ summary: 'Create a new session', operationId: 'createSession' })
     @ApiResponse({ status: 201, description: 'The session has been successfully created.', type: Session })
     @Post()
     create(@Body() createSessionDto: CreateSessionDto) {
         return this.sessionsService.create(createSessionDto);
     }
 
-    @ApiOperation({ summary: 'Update an existing session' })
+    @ApiOperation({ summary: 'Update an existing session', operationId: 'updateSession' })
     @ApiResponse({ status: 200, description: 'The session has been successfully updated.', type: Session })
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateSessionDto: UpdateSessionDto) {
         return this.sessionsService.update(id, updateSessionDto);
     }
 
-    @ApiOperation({ summary: 'Mark a session as completed' })
+    @ApiOperation({ summary: 'Mark a session as completed', operationId: 'completeSession' })
     @ApiResponse({ status: 200, description: 'The session has been marked as completed.', type: Session })
     @Post(':id/complete')
     complete(@Param('id') id: string) {
         return this.sessionsService.complete(id);
     }
 
-    @ApiOperation({ summary: 'Upload a media file for the session' })
+    @ApiOperation({ summary: 'Upload a media file for the session', operationId: 'uploadSessionMedia' })
     @ApiConsumes('multipart/form-data')
     @ApiQuery({ name: 'type', enum: ['ORIGINAL', 'PROCESSED', 'VIDEO'], required: false, description: 'Type of media (default: ORIGINAL)' })
     @ApiBody({
@@ -78,7 +78,7 @@ export class SessionsController {
         return media;
     }
 
-    @ApiOperation({ summary: 'Get session details by ID' })
+    @ApiOperation({ summary: 'Get session details by ID', operationId: 'getSession' })
     @ApiResponse({ status: 200, description: 'Return the session with all associated media.', type: Session })
     @Get(':id')
     findOne(@Param('id') id: string) {
