@@ -5,6 +5,7 @@ import { SessionsController } from './sessions.controller';
 import { Session } from '../entities/session.entity';
 import { Media } from '../entities/media.entity';
 import { StorageModule } from '../storage/storage.module';
+import { VideoService } from './video.service';
 
 @Module({
     imports: [
@@ -12,7 +13,7 @@ import { StorageModule } from '../storage/storage.module';
         StorageModule,
     ],
     controllers: [SessionsController],
-    providers: [SessionsService],
-    exports: [SessionsService],
+    providers: [SessionsService, VideoService],
+    exports: [SessionsService, VideoService],
 })
 export class SessionsModule { }
