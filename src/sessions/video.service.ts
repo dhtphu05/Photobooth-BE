@@ -28,7 +28,10 @@ export class VideoService {
                     // 2. CRITICAL FOR SAFARI: Pixel Format must be yuv420p
                     .outputOptions('-pix_fmt yuv420p')
 
-                    // 3. Force Audio Codec AAC (Safari dislikes Opus/MP3 in MP4 container)
+                    // 3. Fix Odd Dimensions (Apple Hardware Decoder crashes on odd numbers)
+                    .outputOptions('-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2')
+
+                    // 4. Force Audio Codec AAC (Safari dislikes Opus/MP4 in MP4 container)
                     .audioCodec('aac')
 
                     // 4. Move metadata to front (Fast Start)
