@@ -13,7 +13,9 @@ import { ServerToClientEvents, ClientToServerEvents } from './booth.events';
 @WebSocketGateway({
     cors: {
         origin: '*',
+        credentials: true,
     },
+    maxHttpBufferSize: 50 * 1024 * 1024, // 50MB
 })
 export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
