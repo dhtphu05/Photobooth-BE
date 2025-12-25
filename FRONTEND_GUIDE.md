@@ -54,12 +54,15 @@ Used to sync the Controller (iPad) with the Monitor.
 ### Socket Events Reference
 | Event | Direction | Payload | Description |
 | :--- | :--- | :--- | :--- |
-| `join` | Client -> Server | `roomId` (Session ID) | Join the room for the current session. |
-| `update_state` | Client -> Server | `{ selectedFilter?, selectedFrame? }` | Controller updates filter/frame. |
-| `trigger_countdown` | Client -> Server | `roomId` | Controller starts the countdown. |
-| `state_updated` | Server -> Client | `{ selectedFilter?, selectedFrame? }` | Monitor updates UI based on Controller. |
-| `start_countdown` | Server -> Client | `null` | Monitor shows countdown (3..2..1). |
-| `show_result` | Server -> Client | `{ imageUrl }` | Monitor displays the captured photo. |
+| `join` | Client -> Server | `sessionId` | Join the room for the current session. |
+| `update_config` | Client -> Server | `{ selectedFrameId, selectedFilter }` | Controller updates settings. |
+| `trigger_finish` | Client -> Server | `sessionId` | Controller clicks "Print/Finish". |
+| `processing_start` | Client -> Server | `sessionId` | Monitor starts processing (blocks Controller UI). |
+| `processing_done` | Client -> Server | `sessionId` | Monitor finishes processing (unblocks UI). |
+| `update_config` | Server -> Client | `{ selectedFrameId, selectedFilter }` | Relay to other clients (Monitor). |
+| `trigger_finish` | Server -> Client | `null` | Relay to Monitor to start heavy lifting. |
+| `processing_start` | Server -> Client | `null` | Relay to Controller to show loading. |
+| `processing_done` | Server -> Client | `null` | Relay to Controller to finish loading. |
 
 ---
 

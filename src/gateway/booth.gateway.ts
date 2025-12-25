@@ -55,4 +55,32 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
     ) {
         this.server.to(data.sessionId).emit('show_result', { imageUrl: data.imageUrl });
     }
+
+    // --- New Remote Control Handlers ---
+
+    @SubscribeMessage('update_config')
+    handleUpdateConfig(
+        @MessageBody() data: { sessionId: string; selectedFrameId: string; selectedFilter: string },
+    ) {
+        // Broadcast to room (Monitor listens)
+        this.server.to(data.sessionId).emit('update_config', data);
+    }
+
+    @SubscribeMessage('trigger_finish')
+    handleTriggerFinish(@MessageBody() sessionId: string) {
+        // Controller -> Monitor
+        this.server.to(sessionId).emit('trigger_finish');
+    }
+
+    @SubscribeMessage('processing_start')
+    handleProcessingStart(@MessageBody() sessionId: string) {
+        // Monitor -> Controller
+        this.server.to(sessionId).emit('processing_start');
+    }
+
+    @SubscribeMessage('processing_done')
+    handleProcessingDone(@MessageBody() sessionId: string) {
+        // Monitor -> Controller
+        this.server.to(sessionId).emit('processing_done');
+    }
 }
