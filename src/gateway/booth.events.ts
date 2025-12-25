@@ -5,10 +5,18 @@ export interface ServerToClientEvents {
     show_result: (data: { imageUrl: string }) => void;
 
     // New - Remote Control Flow
-    update_config: (data: { sessionId: string; selectedFrameId: string; selectedFilter: string }) => void;
+    // New - Remote Control Flow
+    update_config: (data: {
+        sessionId: string;
+        selectedFrameId?: string;
+        selectedFilter?: string;
+        timerDuration?: number;
+        selectedPhotoIndices?: number[];
+    }) => void;
     trigger_finish: () => void;
     processing_start: () => void;
     processing_done: () => void;
+    photo_taken: (data: { image: string }) => void; // New
 }
 
 export interface ClientToServerEvents {
@@ -20,8 +28,15 @@ export interface ClientToServerEvents {
     capture_done: (data: { sessionId: string; imageUrl: string }) => void;
 
     // New - Remote Control Flow
-    update_config: (data: { sessionId: string; selectedFrameId: string; selectedFilter: string }) => void;
+    update_config: (data: {
+        sessionId: string;
+        selectedFrameId?: string;
+        selectedFilter?: string;
+        timerDuration?: number;
+        selectedPhotoIndices?: number[];
+    }) => void;
     trigger_finish: (sessionId: string) => void;
     processing_start: (sessionId: string) => void;
     processing_done: (sessionId: string) => void;
+    photo_taken: (data: { sessionId: string; image: string }) => void; // New
 }

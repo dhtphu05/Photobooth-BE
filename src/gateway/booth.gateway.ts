@@ -60,10 +60,22 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('update_config')
     handleUpdateConfig(
-        @MessageBody() data: { sessionId: string; selectedFrameId: string; selectedFilter: string },
+        @MessageBody() data: {
+            sessionId: string;
+            selectedFrameId?: string;
+            selectedFilter?: string;
+            timerDuration?: number;
+            selectedPhotoIndices?: number[];
+        },
     ) {
         // Broadcast to room (Monitor listens)
         this.server.to(data.sessionId).emit('update_config', data);
+    }
+
+    @SubscribeMessage('photo_taken')
+    handlePhotoTaken(@MessageBody() data: { sessionId: string; image: string }) {
+        // Monitor -> Controller (Syncs the captured photo)
+        this.server.to(data.sessionId).emit('photo_taken', { image: data.image });
     }
 
     @SubscribeMessage('trigger_finish')

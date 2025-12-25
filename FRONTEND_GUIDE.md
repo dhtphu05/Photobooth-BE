@@ -55,11 +55,13 @@ Used to sync the Controller (iPad) with the Monitor.
 | Event | Direction | Payload | Description |
 | :--- | :--- | :--- | :--- |
 | `join` | Client -> Server | `sessionId` | Join the room for the current session. |
-| `update_config` | Client -> Server | `{ selectedFrameId, selectedFilter }` | Controller updates settings. |
+| `update_config` | Client -> Server | `{ selectedFrameId?, selectedFilter?, timerDuration?, selectedPhotoIndices? }` | Controller updates settings/state. |
 | `trigger_finish` | Client -> Server | `sessionId` | Controller clicks "Print/Finish". |
+| `photo_taken` | Client -> Server | `{ sessionId, image }` | Monitor sends captured photo to Controller in real-time. |
 | `processing_start` | Client -> Server | `sessionId` | Monitor starts processing (blocks Controller UI). |
 | `processing_done` | Client -> Server | `sessionId` | Monitor finishes processing (unblocks UI). |
-| `update_config` | Server -> Client | `{ selectedFrameId, selectedFilter }` | Relay to other clients (Monitor). |
+| `update_config` | Server -> Client | `{ ... }` | Relay to other clients (Monitor/Controller). |
+| `photo_taken` | Server -> Client | `{ image }` | Relay to Controller to display thumbnail. |
 | `trigger_finish` | Server -> Client | `null` | Relay to Monitor to start heavy lifting. |
 | `processing_start` | Server -> Client | `null` | Relay to Controller to show loading. |
 | `processing_done` | Server -> Client | `null` | Relay to Controller to finish loading. |
