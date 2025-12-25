@@ -21,14 +21,22 @@ export class VideoService {
 
             await new Promise<void>((resolve, reject) => {
                 ffmpeg(inputPath)
-                    .outputOptions([
-                        '-c:v libx264',      // H.264 video codec (standard for iOS)
-                        '-pix_fmt yuv420p',  // Pixel format required for broad compatibility
-                        '-movflags +faststart', // Optimize for web streaming
-                        '-c:a aac',          // AAC audio codec
-                        '-b:a 192k'          // Audio bitrate
-                    ])
                     .output(outputPath)
+                    // 1. Force Codec H.264 (Standard for all devices)
+                    .videoCodec('libx264')
+
+                    // 2. CRITICAL FOR SAFARI: Pixel Format must be yuv420p
+                    .outputOptions('-pix_fmt yuv420p')
+
+                    // 3. Force Audio Codec AAC (Safari dislikes Opus/MP3 in MP4 container)
+                    .audioCodec('aac')
+
+                    // 4. Move metadata to front (Fast Start)
+                    .outputOptions('-movflags +faststart')
+
+                    // Optional: Fast preset
+                    .outputOptions('-preset fast')
+
                     .on('end', () => {
                         this.logger.log('Video conversion completed successfully');
                         resolve();

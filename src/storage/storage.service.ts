@@ -32,12 +32,7 @@ export class StorageService {
             resumable: false,
         });
 
-        // Make the file public if the bucket isn't uniformly public
-        try {
-            await file.makePublic();
-        } catch (error) {
-            this.logger.warn(`Could not make file public (might be uniform bucket level access): ${error.message}`);
-        }
+
 
         return `https://storage.googleapis.com/${this.bucketName}/${filename}`;
     }

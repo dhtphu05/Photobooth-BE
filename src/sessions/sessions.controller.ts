@@ -41,7 +41,7 @@ export class SessionsController {
         return this.sessionsService.complete(id);
     }
 
-    @ApiOperation({ summary: 'Upload a media file for the session', operationId: 'uploadSessionMedia' })
+    @ApiOperation({ summary: 'Upload a media file (WebM automatically converted to MP4)', operationId: 'uploadSessionMedia' })
     @ApiConsumes('multipart/form-data')
     @ApiQuery({ name: 'type', enum: ['ORIGINAL', 'PROCESSED', 'VIDEO'], required: false, description: 'Type of media (default: ORIGINAL)' })
     @ApiBody({
