@@ -5,6 +5,7 @@ import { Session } from '../entities/session.entity';
 import { Media } from '../entities/media.entity';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
+import { BoothGateway } from '../gateway/booth.gateway';
 
 @Injectable()
 export class SessionsService {
@@ -13,12 +14,23 @@ export class SessionsService {
         private sessionsRepository: Repository<Session>,
         @InjectRepository(Media)
         private mediaRepository: Repository<Media>,
+        private readonly boothGateway: BoothGateway,
     ) { }
 
     async create(createSessionDto: CreateSessionDto): Promise<Session> {
         // config from dto is currently unused/unmapped
         const session = this.sessionsRepository.create();
-        return this.sessionsRepository.save(session);
+        const savedSession = await this.sessionsRepository.save(session);
+        this.boothGateway.server.emit('session_created', savedSession);
+        return savedSession;
+    }
+
+    async findAll(): Promise<Session[]> {
+        return this.sessionsRepository.find({
+            order: { createdAt: 'DESC' },
+            take: 100, // Limit to last 100 sessions to prevent overload
+            relations: ['medias'],
+        });
     }
 
     async update(id: string, updateSessionDto: UpdateSessionDto): Promise<Session> {

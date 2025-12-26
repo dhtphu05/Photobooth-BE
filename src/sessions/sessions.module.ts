@@ -6,11 +6,13 @@ import { Session } from '../entities/session.entity';
 import { Media } from '../entities/media.entity';
 import { StorageModule } from '../storage/storage.module';
 import { VideoService } from './video.service';
+import { GatewayModule } from '../gateway/gateway.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Session, Media]),
         StorageModule,
+        GatewayModule,
     ],
     controllers: [SessionsController],
     providers: [SessionsService, VideoService],

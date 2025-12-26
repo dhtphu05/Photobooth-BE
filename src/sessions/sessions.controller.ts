@@ -103,6 +103,13 @@ export class SessionsController {
         return media;
     }
 
+    @ApiOperation({ summary: 'List all sessions', operationId: 'getSessions' })
+    @ApiResponse({ status: 200, description: 'Return list of sessions.', type: [Session] })
+    @Get()
+    findAll() {
+        return this.sessionsService.findAll();
+    }
+
     @ApiOperation({ summary: 'Get session details by ID', operationId: 'getSession' })
     @ApiResponse({ status: 200, description: 'Return the session with all associated media.', type: Session })
     @Get(':id')

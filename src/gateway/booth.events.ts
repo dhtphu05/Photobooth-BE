@@ -3,6 +3,7 @@ export interface ServerToClientEvents {
     state_updated: (data: { sessionId: string; filter?: string; frame?: string }) => void;
     start_countdown: () => void;
     show_result: (data: { imageUrl: string }) => void;
+    session_created: (session: any) => void;
 
     // New - Remote Control Flow
     // New - Remote Control Flow
