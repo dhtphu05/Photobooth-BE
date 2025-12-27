@@ -68,6 +68,7 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
             selectedFilter?: string;
             timerDuration?: number;
             selectedPhotoIndices?: number[];
+            customMessage?: string;
         },
     ) {
         // Broadcast to room (Monitor listens)

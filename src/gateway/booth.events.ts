@@ -13,6 +13,7 @@ export interface ServerToClientEvents {
         selectedFilter?: string;
         timerDuration?: number;
         selectedPhotoIndices?: number[];
+        customMessage?: string;
     }) => void;
     trigger_finish: () => void;
     processing_start: () => void;
@@ -35,6 +36,7 @@ export interface ClientToServerEvents {
         selectedFilter?: string;
         timerDuration?: number;
         selectedPhotoIndices?: number[];
+        customMessage?: string;
     }) => void;
     trigger_finish: (sessionId: string) => void;
     processing_start: (sessionId: string) => void;

@@ -14,10 +14,15 @@ export class VideoService {
         const outputPath = path.join(os.tmpdir(), `output-${uniqueId}.mp4`);
 
         try {
+            if (!inputBuffer || inputBuffer.length === 0) {
+                throw new Error('Input buffer is empty');
+            }
+
             // Write input buffer to temp file
             await fs.promises.writeFile(inputPath, inputBuffer);
 
-            this.logger.log(`Starting conversion: ${inputPath} -> ${outputPath}`);
+            const stats = await fs.promises.stat(inputPath);
+            this.logger.log(`Starting conversion: ${inputPath} (${stats.size} bytes) -> ${outputPath}`);
 
             await new Promise<void>((resolve, reject) => {
                 ffmpeg(inputPath)

@@ -72,6 +72,12 @@ export class SessionsController {
         let finalBuffer = file.buffer;
         let finalMimeType = file.mimetype;
 
+        console.log(`[Upload] File: ${file.originalname}, Size: ${file.size}, Mime: ${file.mimetype}`);
+
+        if (file.size === 0) {
+            throw new BadRequestException('File is empty');
+        }
+
         // Generate a unique filename
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         const originalName = file.originalname.replace(/\s+/g, '-'); // Sanitize
