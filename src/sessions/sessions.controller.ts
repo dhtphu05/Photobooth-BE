@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException, Query, Get, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException, Query, Get, Delete, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
@@ -19,6 +20,26 @@ export class SessionsController {
         private readonly storageService: StorageService,
         private readonly videoService: VideoService,
     ) { }
+
+    @Post('convert')
+    async convertVideo(
+        @Body() body: { video: string, isMirrored?: boolean },
+        @Res() res: Response,
+    ) {
+        const videoBuffer = Buffer.from(body.video, 'base64');
+        const mp4Buffer = await this.videoService.convertWebMToMp4(
+            videoBuffer,
+            body.isMirrored,
+        );
+
+        res.set({
+            'Content-Type': 'video/mp4',
+            'Content-Length': mp4Buffer.length.toString(),
+            'Accept-Ranges': 'bytes',
+        });
+
+        res.send(mp4Buffer);
+    }
 
     @ApiOperation({ summary: 'Create a new session', operationId: 'createSession' })
     @ApiResponse({ status: 201, description: 'The session has been successfully created.', type: Session })
