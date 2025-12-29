@@ -30,20 +30,17 @@ export class VideoService {
                     // 1. Force Codec H.264 (Standard for all devices)
                     .videoCodec('libx264')
 
-                    // 2. CRITICAL FOR SAFARI: Pixel Format must be yuv420p
-                    .outputOptions('-pix_fmt yuv420p')
-
-                    // 3. Fix Odd Dimensions (Apple Hardware Decoder crashes on odd numbers) + Optional Mirror
-                    .outputOptions('-vf', isMirrored ? 'hflip,scale=trunc(iw/2)*2:trunc(ih/2)*2' : 'scale=trunc(iw/2)*2:trunc(ih/2)*2')
-
-                    // 4. Force Audio Codec AAC (Safari dislikes Opus/MP4 in MP4 container)
                     .audioCodec('aac')
-
-                    // 4. Move metadata to front (Fast Start)
-                    .outputOptions('-movflags +faststart')
-
-                    // Optional: Fast preset
-                    .outputOptions('-preset fast')
+                    .outputOptions([
+                        '-pix_fmt yuv420p',
+                        '-profile:v high',
+                        '-level:v 4.1',
+                        '-r 30',
+                        '-vsync cfr',
+                        `-vf ${isMirrored ? 'hflip,' : ''}scale=trunc(iw/2)*2:trunc(ih/2)*2`,
+                        '-movflags +faststart',
+                        '-preset fast',
+                    ])
 
                     .on('end', () => {
                         this.logger.log('Video conversion completed successfully');

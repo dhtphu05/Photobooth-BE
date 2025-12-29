@@ -70,4 +70,33 @@ export class SessionsService {
         }
         return session;
     }
+
+    async remove(id: string): Promise<void> {
+        const session = await this.findOne(id);
+        await this.sessionsRepository.remove(session);
+    }
+
+    async getOverviewStats() {
+        const total = await this.sessionsRepository.count();
+        return { total };
+    }
+
+    async getDailyStats() {
+        return this.sessionsRepository.createQueryBuilder('session')
+            .select("TO_CHAR(session.createdAt, 'YYYY-MM-DD')", 'date')
+            .addSelect("COUNT(*)", 'count')
+            .groupBy("TO_CHAR(session.createdAt, 'YYYY-MM-DD')")
+            .orderBy('date', 'DESC')
+            .take(30) // Last 30 days
+            .getRawMany();
+    }
+
+    async getHourlyStats() {
+        return this.sessionsRepository.createQueryBuilder('session')
+            .select("TO_CHAR(session.createdAt, 'HH24')", 'hour')
+            .addSelect("COUNT(*)", 'count')
+            .groupBy("TO_CHAR(session.createdAt, 'HH24')")
+            .orderBy('hour', 'ASC')
+            .getRawMany();
+    }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException, Query, Get } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException, Query, Get, Delete } from '@nestjs/common';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
@@ -118,10 +118,38 @@ export class SessionsController {
         return this.sessionsService.findAll();
     }
 
+    @ApiOperation({ summary: 'Get overview statistics', operationId: 'getOverviewStats' })
+    @ApiResponse({ status: 200, description: 'Return overview statistics.' })
+    @Get('stats/overview')
+    getOverviewStats() {
+        return this.sessionsService.getOverviewStats();
+    }
+
+    @ApiOperation({ summary: 'Get daily statistics', operationId: 'getDailyStats' })
+    @ApiResponse({ status: 200, description: 'Return daily statistics.' })
+    @Get('stats/daily')
+    getDailyStats() {
+        return this.sessionsService.getDailyStats();
+    }
+
+    @ApiOperation({ summary: 'Get hourly statistics', operationId: 'getHourlyStats' })
+    @ApiResponse({ status: 200, description: 'Return hourly statistics.' })
+    @Get('stats/hourly')
+    getHourlyStats() {
+        return this.sessionsService.getHourlyStats();
+    }
+
     @ApiOperation({ summary: 'Get session details by ID', operationId: 'getSession' })
     @ApiResponse({ status: 200, description: 'Return the session with all associated media.', type: Session })
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.sessionsService.findOne(id);
+    }
+
+    @ApiOperation({ summary: 'Delete a session', operationId: 'deleteSession' })
+    @ApiResponse({ status: 200, description: 'The session has been successfully deleted.' })
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.sessionsService.remove(id);
     }
 }
