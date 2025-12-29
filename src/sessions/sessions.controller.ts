@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Patch, Param, UseInterceptors, UploadedFile, BadRequestException, Query, Get, Delete, Res } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
