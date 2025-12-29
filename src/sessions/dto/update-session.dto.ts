@@ -9,4 +9,7 @@ export class UpdateSessionDto {
 
     @ApiPropertyOptional({ description: 'Selected frame identifier' })
     selectedFrame?: string;
+
+    @ApiPropertyOptional({ description: 'Whether the session output is mirrored' })
+    isMirrored?: boolean;
 }

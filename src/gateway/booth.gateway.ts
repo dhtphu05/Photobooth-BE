@@ -9,6 +9,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ServerToClientEvents, ClientToServerEvents } from './booth.events';
+import { Inject, forwardRef } from '@nestjs/common';
+import { SessionsService } from '../sessions/sessions.service';
 
 @WebSocketGateway({
     cors: {
@@ -20,6 +22,11 @@ import { ServerToClientEvents, ClientToServerEvents } from './booth.events';
 export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
     server: Server<ClientToServerEvents, ServerToClientEvents>;
+
+    constructor(
+        @Inject(forwardRef(() => SessionsService))
+        private readonly sessionsService: SessionsService,
+    ) { }
 
     handleConnection(client: Socket) {
         console.log(`Client connected: ${client.id}`);
@@ -61,7 +68,7 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // --- New Remote Control Handlers ---
 
     @SubscribeMessage('update_config')
-    handleUpdateConfig(
+    async handleUpdateConfig(
         @MessageBody() data: {
             sessionId: string;
             selectedFrameId?: string;
@@ -69,10 +76,20 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
             timerDuration?: number;
             selectedPhotoIndices?: number[];
             customMessage?: string;
+            isMirrored?: boolean;
         },
     ) {
         // Broadcast to room (Monitor listens)
         this.server.to(data.sessionId).emit('update_config', data);
+
+        // Persist mirrored state if present
+        if (data.isMirrored !== undefined) {
+            try {
+                await this.sessionsService.update(data.sessionId, { isMirrored: data.isMirrored });
+            } catch (error) {
+                console.error(`Failed to update session ${data.sessionId} config`, error);
+            }
+        }
     }
 
     @SubscribeMessage('photo_taken')

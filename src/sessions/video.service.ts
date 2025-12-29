@@ -8,7 +8,7 @@ import * as os from 'os';
 export class VideoService {
     private readonly logger = new Logger(VideoService.name);
 
-    async convertWebMToMp4(inputBuffer: Buffer): Promise<Buffer> {
+    async convertWebMToMp4(inputBuffer: Buffer, isMirrored: boolean = false): Promise<Buffer> {
         const uniqueId = Date.now() + '-' + Math.round(Math.random() * 1e9);
         const inputPath = path.join(os.tmpdir(), `input-${uniqueId}.webm`);
         const outputPath = path.join(os.tmpdir(), `output-${uniqueId}.mp4`);
@@ -33,8 +33,8 @@ export class VideoService {
                     // 2. CRITICAL FOR SAFARI: Pixel Format must be yuv420p
                     .outputOptions('-pix_fmt yuv420p')
 
-                    // 3. Fix Odd Dimensions (Apple Hardware Decoder crashes on odd numbers)
-                    .outputOptions('-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2')
+                    // 3. Fix Odd Dimensions (Apple Hardware Decoder crashes on odd numbers) + Optional Mirror
+                    .outputOptions('-vf', isMirrored ? 'hflip,scale=trunc(iw/2)*2:trunc(ih/2)*2' : 'scale=trunc(iw/2)*2:trunc(ih/2)*2')
 
                     // 4. Force Audio Codec AAC (Safari dislikes Opus/MP4 in MP4 container)
                     .audioCodec('aac')

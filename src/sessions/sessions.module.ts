@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SessionsService } from './sessions.service';
 import { SessionsController } from './sessions.controller';
@@ -12,7 +12,7 @@ import { GatewayModule } from '../gateway/gateway.module';
     imports: [
         TypeOrmModule.forFeature([Session, Media]),
         StorageModule,
-        GatewayModule,
+        forwardRef(() => GatewayModule),
     ],
     controllers: [SessionsController],
     providers: [SessionsService, VideoService],

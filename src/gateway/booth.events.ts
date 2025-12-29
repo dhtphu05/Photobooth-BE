@@ -14,6 +14,7 @@ export interface ServerToClientEvents {
         timerDuration?: number;
         selectedPhotoIndices?: number[];
         customMessage?: string;
+        isMirrored?: boolean;
     }) => void;
     trigger_finish: () => void;
     processing_start: () => void;
@@ -37,6 +38,7 @@ export interface ClientToServerEvents {
         timerDuration?: number;
         selectedPhotoIndices?: number[];
         customMessage?: string;
+        isMirrored?: boolean;
     }) => void;
     trigger_finish: (sessionId: string) => void;
     processing_start: (sessionId: string) => void;

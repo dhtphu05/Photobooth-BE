@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Session } from '../entities/session.entity';
@@ -14,6 +14,7 @@ export class SessionsService {
         private sessionsRepository: Repository<Session>,
         @InjectRepository(Media)
         private mediaRepository: Repository<Media>,
+        @Inject(forwardRef(() => BoothGateway))
         private readonly boothGateway: BoothGateway,
     ) { }
 

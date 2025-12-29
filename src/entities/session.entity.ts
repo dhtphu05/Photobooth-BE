@@ -27,6 +27,10 @@ export class Session {
     @Column({ nullable: true })
     selectedFrame: string;
 
+    @ApiProperty({ description: 'Whether the session output is mirrored', default: false })
+    @Column({ default: false })
+    isMirrored: boolean;
+
     @ApiProperty({ description: 'The date and time when the session was created' })
     @CreateDateColumn()
     createdAt: Date;

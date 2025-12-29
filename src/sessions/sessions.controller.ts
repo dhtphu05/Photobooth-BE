@@ -69,6 +69,8 @@ export class SessionsController {
             throw new BadRequestException('File is required');
         }
 
+        const session = await this.sessionsService.findOne(id);
+
         let finalBuffer = file.buffer;
         let finalMimeType = file.mimetype;
 
@@ -86,7 +88,7 @@ export class SessionsController {
         // Check if conversion is needed (WebM -> MP4)
         if (file.mimetype === 'video/webm' || file.mimetype === 'video/x-matroska') {
             try {
-                finalBuffer = await this.videoService.convertWebMToMp4(file.buffer);
+                finalBuffer = await this.videoService.convertWebMToMp4(file.buffer, session.isMirrored);
                 finalMimeType = 'video/mp4';
                 // Change extension in filename
                 if (filename.endsWith('.webm')) {
