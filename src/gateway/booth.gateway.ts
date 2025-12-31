@@ -98,6 +98,21 @@ export class BoothGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.to(data.sessionId).emit('photo_taken', { image: data.image });
     }
 
+    @SubscribeMessage('sync_signature')
+    async handleSyncSignature(
+        @MessageBody() data: { sessionId: string; signatureImage: string },
+    ) {
+        // Controller -> Monitor (Syncs the signature)
+        this.server.to(data.sessionId).emit('sync_signature', { signatureImage: data.signatureImage });
+
+        // Persist signature to DB (optional but recommended in requirements)
+        try {
+            await this.sessionsService.update(data.sessionId, { signatureImage: data.signatureImage });
+        } catch (error) {
+            console.error(`Failed to save signature for session ${data.sessionId}`, error);
+        }
+    }
+
     @SubscribeMessage('trigger_finish')
     handleTriggerFinish(@MessageBody() sessionId: string) {
         // Controller -> Monitor

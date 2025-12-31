@@ -20,6 +20,7 @@ export interface ServerToClientEvents {
     processing_start: () => void;
     processing_done: () => void;
     photo_taken: (data: { image: string }) => void; // New
+    sync_signature: (data: { signatureImage: string }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -44,4 +45,5 @@ export interface ClientToServerEvents {
     processing_start: (sessionId: string) => void;
     processing_done: (sessionId: string) => void;
     photo_taken: (data: { sessionId: string; image: string }) => void; // New
+    sync_signature: (data: { sessionId: string; signatureImage: string }) => void;
 }

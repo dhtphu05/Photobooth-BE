@@ -27,6 +27,10 @@ export class Session {
     @Column({ nullable: true })
     selectedFrame: string;
 
+    @ApiProperty({ description: 'Signature image data (Base64)', nullable: true })
+    @Column({ type: 'text', nullable: true })
+    signatureImage: string;
+
     @ApiProperty({ description: 'Whether the session output is mirrored', default: false })
     @Column({ default: false })
     isMirrored: boolean;
