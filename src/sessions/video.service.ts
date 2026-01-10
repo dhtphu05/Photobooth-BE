@@ -38,7 +38,7 @@ export class VideoService {
                         '-profile:v baseline',
                         
                         // Level 3.1 thay vì 4.1 - tương thích rộng hơn
-                        '-level:v 3.1',
+                        '-level:v 4.1',
                         
                         // Frame rate
                         '-r 30',
